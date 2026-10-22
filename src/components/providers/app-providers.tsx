@@ -5,6 +5,10 @@ import dynamic from "next/dynamic";
 import { ThemeProvider } from "next-themes";
 import { useState, type ReactNode } from "react";
 import { Toaster } from "sonner";
+import {
+  MockServiceWorkerStatusContext,
+  type MockServiceWorkerStatus,
+} from "./mock-service-worker-context";
 
 const MockServiceWorkerProvider = dynamic(
   () =>
@@ -13,14 +17,6 @@ const MockServiceWorkerProvider = dynamic(
     ),
   {
     ssr: false,
-    loading: () => (
-      <div
-        role="status"
-        className="flex min-h-dvh items-center justify-center text-sm text-muted-foreground"
-      >
-        Preparando ambiente de desenvolvimento...
-      </div>
-    ),
   },
 );
 
@@ -30,12 +26,23 @@ interface AppProvidersProps {
 
 export function AppProviders({ children }: AppProvidersProps) {
   const [queryClient] = useState(() => new QueryClient());
+  const [mockServiceWorkerStatus, setMockServiceWorkerStatus] =
+    useState<MockServiceWorkerStatus>(
+      process.env.NODE_ENV === "development" ? "starting" : "inactive",
+    );
 
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
-        <MockServiceWorkerProvider>{children}</MockServiceWorkerProvider>
-        <Toaster richColors position="top-right" />
+        <MockServiceWorkerStatusContext.Provider
+          value={mockServiceWorkerStatus}
+        >
+          <MockServiceWorkerProvider
+            onStatusChange={setMockServiceWorkerStatus}
+          />
+          {children}
+          <Toaster richColors position="top-right" />
+        </MockServiceWorkerStatusContext.Provider>
       </QueryClientProvider>
     </ThemeProvider>
   );

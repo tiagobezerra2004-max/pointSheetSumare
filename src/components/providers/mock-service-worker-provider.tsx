@@ -1,78 +1,46 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
-import { worker } from "@/mocks/browser";
-
-let workerStartPromise: ReturnType<typeof worker.start> | undefined;
-
-function startMockServiceWorker(): ReturnType<typeof worker.start> {
-  if (worker.readyState !== 0) {
-    return Promise.resolve(undefined);
-  }
-
-  if (!workerStartPromise) {
-    workerStartPromise = worker
-      .start({ onUnhandledFrame: "bypass" })
-      .catch((error: unknown) => {
-        workerStartPromise = undefined;
-        throw error;
-      });
-  }
-
-  return workerStartPromise;
-}
+import { useEffect, useState } from "react";
+import { startMockServiceWorker } from "@/mocks/start-worker";
+import type { MockServiceWorkerStatus } from "./mock-service-worker-context";
 
 interface MockServiceWorkerProviderProps {
-  children: ReactNode;
+  onStatusChange: (status: MockServiceWorkerStatus) => void;
 }
 
 export function MockServiceWorkerProvider({
-  children,
+  onStatusChange,
 }: MockServiceWorkerProviderProps) {
-  const [status, setStatus] = useState<"starting" | "ready" | "error">(
-    process.env.NODE_ENV === "development" ? "starting" : "ready",
-  );
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (process.env.NODE_ENV !== "development") {
+      onStatusChange("inactive");
       return;
     }
 
     void startMockServiceWorker()
-      .then(() => setStatus("ready"))
+      .then(() => onStatusChange("ready"))
       .catch((error: unknown) => {
         setErrorMessage(
           error instanceof Error
             ? error.message
             : "Não foi possível iniciar o serviço de dados falso.",
         );
-        setStatus("error");
+        onStatusChange("error");
       });
-  }, []);
+  }, [onStatusChange]);
 
-  if (status === "starting") {
-    return (
-      <div
-        role="status"
-        className="flex min-h-dvh items-center justify-center text-sm text-muted-foreground"
-      >
-        Preparando ambiente de desenvolvimento...
-      </div>
-    );
+  if (!errorMessage) {
+    return null;
   }
 
   return (
-    <>
-      {status === "error" ? (
-        <div
-          role="alert"
-          className="border-b border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
-        >
-          Falha ao iniciar o MSW: {errorMessage}
-        </div>
-      ) : null}
-      {children}
-    </>
+    <div
+      role="alert"
+      className="border-b border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+    >
+      Falha ao iniciar o MSW: {errorMessage}
+    </div>
   );
 }

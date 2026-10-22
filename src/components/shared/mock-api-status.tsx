@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, CircleAlert, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useMockServiceWorkerStatus } from "@/components/providers/mock-service-worker-context";
 
 interface HealthResponse {
   status: "ok";
@@ -32,11 +33,22 @@ async function checkMockApi(): Promise<HealthResponse> {
 }
 
 export function MockApiStatus() {
+  const mockServiceWorkerStatus = useMockServiceWorkerStatus();
   const { data, error, isPending, refetch, isFetching } = useQuery({
     queryKey: ["health"],
     queryFn: checkMockApi,
+    enabled: mockServiceWorkerStatus === "ready",
     retry: false,
   });
+
+  if (mockServiceWorkerStatus === "error") {
+    return (
+      <p className="flex items-center gap-2 text-sm text-destructive" role="alert">
+        <CircleAlert aria-hidden="true" className="size-4" />
+        Não foi possível verificar o endpoint porque o MSW não iniciou.
+      </p>
+    );
+  }
 
   if (isPending) {
     return (
