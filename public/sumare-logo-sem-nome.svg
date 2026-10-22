@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 2000 2000">
+  <defs>
+    <style>
+      .cls-1{fill:#1c0ea7}
+      .cls-2{fill:#080872}
+      .cls-3{fill:#d32b06}
+      .cls-4{fill:#af1d05}
+    </style>
+  </defs>
+  <title>sumare-logo.svg</title>
+  <g id="icone">
+    <g>
+      <path id="azul-longo" d="M1180 637.5 L1360 637.5 L630 1362.5 L630 1187.5 Z" class="cls-1"/>
+      <path id="azul-topo" d="M630 637.5 L810 637.5 L455 992.5 L275 992.5 Z" class="cls-1"/>
+      <path id="azul-dobra" d="M275 992.5 L455 992.5 L630 1167.5 L630 1362.5 Z" class="cls-2"/>
+      <path id="vermelho-longo" d="M1360 637.5 L1360 817.5 L815 1362.5 L635 1362.5 Z" class="cls-3"/>
+      <path id="vermelho-dobra" d="M1360 637.5 L1725 1002.5 L1545 1002.5 L1360 817.5 Z" class="cls-4"/>
+      <path id="vermelho-direita" d="M1545 1002.5 L1725 1002.5 L1360 1362.5 L1185 1362.5 Z" class="cls-3"/>
+    </g>
+  </g>
+  <g id="texto">
+  </g>
+</svg>

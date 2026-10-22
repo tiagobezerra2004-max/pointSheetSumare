@@ -2,10 +2,10 @@
 
 import {
   ClipboardCheck,
-  HardHat,
   UsersRound,
   WalletCards,
 } from "lucide-react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -28,8 +28,15 @@ export function AppShell({ children }: AppShellProps) {
     <div className="min-h-dvh bg-background">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r bg-sidebar text-sidebar-foreground lg:flex">
         <div className="flex h-20 items-center gap-3 border-b px-6">
-          <span className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <HardHat aria-hidden="true" className="size-6" />
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-white p-1.5">
+            <Image
+              src="/residencial-frei-humberto-logo-sem-nome.svg"
+              alt="Residencial Frei Humberto"
+              width={900}
+              height={900}
+              unoptimized
+              className="size-full object-contain"
+            />
           </span>
           <div>
             <p className="font-semibold leading-tight">Controle de obra</p>

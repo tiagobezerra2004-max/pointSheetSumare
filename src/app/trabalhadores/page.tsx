@@ -1,10 +1,5 @@
-import { PageHeader } from "@/components/layout/page-header";
+import { WorkerList } from "@/components/workers/worker-list";
 
 export default function TrabalhadoresPage() {
-  return (
-    <PageHeader
-      title="Trabalhadores"
-      description="O cadastro único da equipe ficará disponível nesta área na etapa RF01."
-    />
-  );
+  return <WorkerList />;
 }
