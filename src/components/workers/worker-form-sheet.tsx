@@ -11,13 +11,12 @@ import {
   useUpdateWorker,
 } from "@/api/hooks";
 import { Button } from "@/components/ui/button";
+import { statusOptions, vinculoOptions } from "@/lib/workerOptions";
 import {
   trabalhadorInputSchema,
   type Funcao,
-  type StatusTrabalhador,
   type Trabalhador,
   type TrabalhadorInput,
-  type Vinculo,
 } from "@/schemas/data";
 
 interface WorkerFormSheetProps {
@@ -29,20 +28,6 @@ interface WorkerFormSheetProps {
   onOpenWorker: (worker: Trabalhador) => void;
   onSaved: () => void;
 }
-
-const vinculoOptions: { value: Vinculo; label: string }[] = [
-  { value: "CLT", label: "CLT" },
-  { value: "Avulso", label: "Avulso" },
-  { value: "Vigia", label: "Vigia" },
-  { value: "JovemAprendiz", label: "Jovem aprendiz" },
-  { value: "Estagiario", label: "Estagiário" },
-];
-
-const statusOptions: StatusTrabalhador[] = [
-  "Ativo",
-  "Afastado",
-  "Desligado",
-];
 
 const fieldClassName =
   "min-h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive";
@@ -130,10 +115,16 @@ function getDefaultValues(worker: Trabalhador | null): TrabalhadorInput {
   };
 }
 
-function FieldError({ message }: { message?: string }) {
+function FieldError({
+  id,
+  message,
+}: {
+  id: string;
+  message?: string;
+}) {
   if (!message) return null;
   return (
-    <p className="text-sm font-medium text-destructive" role="alert">
+    <p id={id} className="text-sm font-medium text-destructive" role="alert">
       {message}
     </p>
   );
@@ -419,8 +410,10 @@ export function WorkerFormSheet({
                   <input
                     id="worker-name"
                     autoComplete="name"
+                    required
                     disabled={isFormDisabled}
                     aria-invalid={Boolean(errors.nome)}
+                    aria-describedby={errors.nome ? "worker-name-error" : undefined}
                     {...nameField}
                     onChange={(event) => {
                       nameField.onChange(event);
@@ -428,7 +421,7 @@ export function WorkerFormSheet({
                     }}
                     className={fieldClassName}
                   />
-                  <FieldError message={errors.nome?.message} />
+                  <FieldError id="worker-name-error" message={errors.nome?.message} />
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -438,12 +431,16 @@ export function WorkerFormSheet({
                     </FieldLabel>
                     <select
                       id="worker-function"
+                      required
                       disabled={isFormDisabled}
                       aria-invalid={Boolean(errors.funcaoId)}
+                      aria-describedby={
+                        errors.funcaoId ? "worker-function-error" : undefined
+                      }
                       {...register("funcaoId", {
                         required: "Selecione a função.",
                       })}
-                      className={fieldClassName}
+                      className={`${fieldClassName} select-control`}
                     >
                       <option value="">Selecione</option>
                       {functions.map((funcao) => (
@@ -452,7 +449,10 @@ export function WorkerFormSheet({
                         </option>
                       ))}
                     </select>
-                    <FieldError message={errors.funcaoId?.message} />
+                    <FieldError
+                      id="worker-function-error"
+                      message={errors.funcaoId?.message}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
@@ -461,9 +461,14 @@ export function WorkerFormSheet({
                     </FieldLabel>
                     <select
                       id="worker-vinculo"
+                      required
                       disabled={isFormDisabled}
+                      aria-invalid={Boolean(errors.vinculo)}
+                      aria-describedby={
+                        errors.vinculo ? "worker-vinculo-error" : undefined
+                      }
                       {...register("vinculo")}
-                      className={fieldClassName}
+                      className={`${fieldClassName} select-control`}
                     >
                       {vinculoOptions.map(({ value, label }) => (
                         <option key={value} value={value}>
@@ -471,7 +476,10 @@ export function WorkerFormSheet({
                         </option>
                       ))}
                     </select>
-                    <FieldError message={errors.vinculo?.message} />
+                    <FieldError
+                      id="worker-vinculo-error"
+                      message={errors.vinculo?.message}
+                    />
                   </div>
                 </div>
 
@@ -482,9 +490,10 @@ export function WorkerFormSheet({
                     </FieldLabel>
                     <select
                       id="worker-status"
+                      required
                       disabled={isFormDisabled}
                       {...register("status")}
-                      className={fieldClassName}
+                      className={`${fieldClassName} select-control`}
                     >
                       {statusOptions.map((status) => (
                         <option key={status} value={status}>
@@ -501,13 +510,20 @@ export function WorkerFormSheet({
                     <input
                       id="worker-start-date"
                       type="date"
+                      required
                       max={localToday()}
                       disabled={isFormDisabled}
                       aria-invalid={Boolean(errors.dataInicio)}
+                      aria-describedby={
+                        errors.dataInicio ? "worker-start-date-error" : undefined
+                      }
                       {...register("dataInicio")}
                       className={fieldClassName}
                     />
-                    <FieldError message={errors.dataInicio?.message} />
+                    <FieldError
+                      id="worker-start-date-error"
+                      message={errors.dataInicio?.message}
+                    />
                   </div>
                 </div>
 
@@ -519,14 +535,23 @@ export function WorkerFormSheet({
                     <input
                       id="worker-termination-date"
                       type="date"
+                      required
                       min={watchedStartDate}
                       max={localToday()}
                       disabled={isFormDisabled}
                       aria-invalid={Boolean(errors.dataDesligamento)}
+                      aria-describedby={
+                        errors.dataDesligamento
+                          ? "worker-termination-date-error"
+                          : undefined
+                      }
                       {...register("dataDesligamento")}
                       className={fieldClassName}
                     />
-                    <FieldError message={errors.dataDesligamento?.message} />
+                    <FieldError
+                      id="worker-termination-date-error"
+                      message={errors.dataDesligamento?.message}
+                    />
                   </div>
                 )}
 
@@ -540,10 +565,14 @@ export function WorkerFormSheet({
                         id="worker-cpf"
                         type={cpfVisible ? "text" : "password"}
                         autoComplete="off"
+                        required
                         inputMode="numeric"
                         maxLength={14}
                         disabled={isFormDisabled}
                         aria-invalid={Boolean(errors.cpf)}
+                        aria-describedby={
+                          errors.cpf ? "worker-cpf-error" : undefined
+                        }
                         {...cpfField}
                         onChange={(event) => {
                           setValue("cpf", formatCpf(event.currentTarget.value), {
@@ -562,7 +591,7 @@ export function WorkerFormSheet({
                     <p className="text-xs text-muted-foreground">
                       O CPF fica oculto e será revelado por até 10 segundos.
                     </p>
-                    <FieldError message={errors.cpf?.message} />
+                    <FieldError id="worker-cpf-error" message={errors.cpf?.message} />
                   </div>
 
                   <div className="space-y-1.5">
@@ -572,13 +601,22 @@ export function WorkerFormSheet({
                     <input
                       id="worker-birth-date"
                       type="date"
+                      required
                       max={localToday()}
                       disabled={isFormDisabled}
                       aria-invalid={Boolean(errors.dataNascimento)}
+                      aria-describedby={
+                        errors.dataNascimento
+                          ? "worker-birth-date-error"
+                          : undefined
+                      }
                       {...register("dataNascimento")}
                       className={fieldClassName}
                     />
-                    <FieldError message={errors.dataNascimento?.message} />
+                    <FieldError
+                      id="worker-birth-date-error"
+                      message={errors.dataNascimento?.message}
+                    />
                   </div>
                 </div>
 
@@ -591,6 +629,9 @@ export function WorkerFormSheet({
                     inputMode="tel"
                     disabled={isFormDisabled}
                     aria-invalid={Boolean(errors.telefone)}
+                    aria-describedby={
+                      errors.telefone ? "worker-phone-error" : undefined
+                    }
                     {...phoneField}
                     onChange={(event) => {
                       setValue(
@@ -601,7 +642,7 @@ export function WorkerFormSheet({
                     }}
                     className={fieldClassName}
                   />
-                  <FieldError message={errors.telefone?.message} />
+                  <FieldError id="worker-phone-error" message={errors.telefone?.message} />
                 </div>
               </section>
 
@@ -647,9 +688,10 @@ export function WorkerFormSheet({
                         </FieldLabel>
                         <select
                           id="worker-pix-type"
+                          required
                           disabled={isFormDisabled}
                           {...register("pagamento.tipoChave")}
-                          className={fieldClassName}
+                          className={`${fieldClassName} select-control`}
                         >
                           <option value="CPF">CPF</option>
                           <option value="Telefone">Telefone</option>
@@ -667,8 +709,14 @@ export function WorkerFormSheet({
                             id="worker-pix-key"
                             type={pixVisible ? "text" : "password"}
                             autoComplete="off"
+                            required
                             disabled={isFormDisabled}
                             aria-invalid={Boolean(errors.pagamento?.chavePix)}
+                            aria-describedby={
+                              errors.pagamento?.chavePix
+                                ? "worker-pix-key-error"
+                                : undefined
+                            }
                             {...register("pagamento.chavePix")}
                             className={`${fieldClassName} pr-12`}
                           />
@@ -689,6 +737,7 @@ export function WorkerFormSheet({
                           {" "}A chave fica oculta e será revelada por até 10 segundos.
                         </p>
                         <FieldError
+                          id="worker-pix-key-error"
                           message={errors.pagamento?.chavePix?.message}
                         />
                       </div>
@@ -701,12 +750,21 @@ export function WorkerFormSheet({
                       <input
                         id="worker-bank"
                         autoComplete="organization"
+                        required
                         disabled={isFormDisabled}
                         aria-invalid={Boolean(errors.pagamento?.banco)}
+                        aria-describedby={
+                          errors.pagamento?.banco
+                            ? "worker-bank-error"
+                            : undefined
+                        }
                         {...register("pagamento.banco")}
                         className={fieldClassName}
                       />
-                      <FieldError message={errors.pagamento?.banco?.message} />
+                      <FieldError
+                        id="worker-bank-error"
+                        message={errors.pagamento?.banco?.message}
+                      />
                     </div>
 
                     <div className="flex min-h-11 items-center gap-3">
@@ -749,14 +807,21 @@ export function WorkerFormSheet({
                           <input
                             id="worker-pix-holder"
                             autoComplete="off"
+                            required
                             disabled={isFormDisabled}
                             aria-invalid={Boolean(
                               errors.pagamento?.titularDaChave,
                             )}
+                            aria-describedby={
+                              errors.pagamento?.titularDaChave
+                                ? "worker-pix-holder-error"
+                                : undefined
+                            }
                             {...register("pagamento.titularDaChave")}
                             className={fieldClassName}
                           />
                           <FieldError
+                            id="worker-pix-holder-error"
                             message={
                               errors.pagamento?.titularDaChave?.message
                             }

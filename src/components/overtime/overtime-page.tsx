@@ -99,7 +99,7 @@ function getOvertimePreview(
   };
 }
 
-function FieldError({ id, message }: { id?: string; message?: string }) {
+function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
     <p id={id} className="text-sm font-medium text-destructive" role="alert">
@@ -205,6 +205,7 @@ function WorkerCombobox({
           id="overtime-worker"
           className={fieldClassName}
           placeholder="Busque pelo nome do trabalhador"
+          required
           aria-invalid={Boolean(error)}
           aria-describedby={error ? "overtime-worker-error" : undefined}
         />
@@ -443,11 +444,18 @@ function OvertimeFormDialog({
                     id="overtime-date"
                     type="date"
                     className={fieldClassName}
+                    required
                     aria-invalid={Boolean(errors.data)}
+                    aria-describedby={
+                      errors.data ? "overtime-date-error" : undefined
+                    }
                     {...register("data")}
                     disabled={isPending}
                   />
-                  <FieldError message={errors.data?.message} />
+                  <FieldError
+                    id="overtime-date-error"
+                    message={errors.data?.message}
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <label htmlFor="overtime-hours" className="text-sm font-medium">
@@ -462,11 +470,18 @@ function OvertimeFormDialog({
                     inputMode="decimal"
                     placeholder="Ex.: 2,5"
                     className={fieldClassName}
+                    required
                     aria-invalid={Boolean(errors.horas)}
+                    aria-describedby={
+                      errors.horas ? "overtime-hours-error" : undefined
+                    }
                     {...register("horas", { valueAsNumber: true })}
                     disabled={isPending}
                   />
-                  <FieldError message={errors.horas?.message} />
+                  <FieldError
+                    id="overtime-hours-error"
+                    message={errors.horas?.message}
+                  />
                 </div>
               </div>
 
@@ -476,8 +491,12 @@ function OvertimeFormDialog({
                 </label>
                 <select
                   id="overtime-activity"
-                  className={fieldClassName}
+                  className={`${fieldClassName} select-control`}
+                  required
                   aria-invalid={Boolean(errors.atividadeId)}
+                  aria-describedby={
+                    errors.atividadeId ? "overtime-activity-error" : undefined
+                  }
                   {...register("atividadeId")}
                   disabled={isPending}
                 >
@@ -488,7 +507,10 @@ function OvertimeFormDialog({
                     </option>
                   ))}
                 </select>
-                <FieldError message={errors.atividadeId?.message} />
+                <FieldError
+                  id="overtime-activity-error"
+                  message={errors.atividadeId?.message}
+                />
               </div>
 
               <div className="space-y-1.5">
@@ -527,9 +549,17 @@ function OvertimeFormDialog({
                     }}
                     className={`${fieldClassName} py-2`}
                     aria-invalid={Boolean(changeReasonError)}
+                    aria-describedby={
+                      changeReasonError
+                        ? "overtime-change-reason-error"
+                        : undefined
+                    }
                     disabled={isPending}
                   />
-                  <FieldError message={changeReasonError} />
+                  <FieldError
+                    id="overtime-change-reason-error"
+                    message={changeReasonError}
+                  />
                 </div>
               )}
 
@@ -772,7 +802,7 @@ function DeleteOvertimeDialog({
               aria-invalid={Boolean(error)}
               disabled={deleteMutation.isPending}
             />
-            <FieldError message={error} />
+            <FieldError id="overtime-worker-error" message={error} />
             <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button
                 type="button"
@@ -995,7 +1025,7 @@ export function OvertimePage() {
               />
               <select
                 id="overtime-filter-worker"
-                className={`${fieldClassName} pl-9`}
+                className={`${fieldClassName} select-control pl-9`}
                 value={workerFilter}
                 onChange={(event) => setWorkerFilter(event.target.value)}
               >
@@ -1014,7 +1044,7 @@ export function OvertimePage() {
             </label>
             <select
               id="overtime-filter-activity"
-              className={fieldClassName}
+              className={`${fieldClassName} select-control`}
               value={activityFilter}
               onChange={(event) => setActivityFilter(event.target.value)}
             >

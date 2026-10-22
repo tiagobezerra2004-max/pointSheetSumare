@@ -398,10 +398,7 @@ export function AttendancePage() {
     try {
       await saveMutation.mutateAsync(payload);
       setDrafts({});
-      await Promise.all([
-        attendanceQuery.refetch(),
-        Promise.resolve(),
-      ]);
+      await attendanceQuery.refetch();
       toast.success("Frequência salva com sucesso.");
     } catch (error) {
       toast.error(
@@ -619,7 +616,7 @@ export function AttendancePage() {
                 <select
                   value={functionFilter}
                   onChange={(event) => setFunctionFilter(event.target.value)}
-                  className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
+                  className="select-control h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
                 >
                   <option value="">Todas as funções</option>
                   {functions.map((funcao) => (

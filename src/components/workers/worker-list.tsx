@@ -17,29 +17,15 @@ import { Button } from "@/components/ui/button";
 import { useFunctions, useWorkers } from "@/api/hooks";
 import { WorkerFormSheet } from "@/components/workers/worker-form-sheet";
 import { formatDateBR } from "@/lib/formatters";
+import { statusOptions, vinculoOptions } from "@/lib/workerOptions";
 import type {
   Funcao,
   StatusTrabalhador,
   Trabalhador,
-  Vinculo,
 } from "@/schemas/data";
-
-const statusOptions: StatusTrabalhador[] = [
-  "Ativo",
-  "Afastado",
-  "Desligado",
-];
 
 const EMPTY_FUNCTIONS: Funcao[] = [];
 const EMPTY_WORKERS: Trabalhador[] = [];
-
-const vinculoOptions: { value: Vinculo; label: string }[] = [
-  { value: "CLT", label: "CLT" },
-  { value: "Avulso", label: "Avulso" },
-  { value: "Vigia", label: "Vigia" },
-  { value: "JovemAprendiz", label: "Jovem aprendiz" },
-  { value: "Estagiario", label: "Estagiário" },
-];
 
 const statusStyles: Record<StatusTrabalhador, string> = {
   Ativo:
@@ -297,7 +283,7 @@ export function WorkerList() {
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value)}
-              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
+              className="select-control h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
             >
               <option value="">Todos os status</option>
               {statusOptions.map((status) => (
@@ -313,7 +299,7 @@ export function WorkerList() {
             <select
               value={vinculoFilter}
               onChange={(event) => setVinculoFilter(event.target.value)}
-              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
+              className="select-control h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
             >
               <option value="">Todos os vínculos</option>
               {vinculoOptions.map(({ value, label }) => (
@@ -329,7 +315,7 @@ export function WorkerList() {
             <select
               value={functionFilter}
               onChange={(event) => setFunctionFilter(event.target.value)}
-              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
+              className="select-control h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
             >
               <option value="">Todas as funções</option>
               {functions.map((funcao) => (
